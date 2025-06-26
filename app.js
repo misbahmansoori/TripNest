@@ -105,3 +105,16 @@ app.delete("/listings/:id", async(req, res) => {
 //     console.log("sample saved");
 //     res.send("Successfully saved");
 // });
+// app.get("/testListing", async(req, res) => {
+//     let sampleListing = new Listing({
+//         title: "My new Villa",
+//         description: "By the Beach",
+//         price: 1200,
+//         location: "America",
+//         country: "USA"
+//     });
+
+//     await sampleListing.save();
+//     console.log("sample saved");
+//     res.send("Successfully saved");
+// });
