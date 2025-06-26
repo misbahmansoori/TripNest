@@ -3,6 +3,9 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
+const wrapAsync = require("./utils/wrapAsync.js");
+const ExpressError = require("./utils/ExpressError.js");
+
 
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
@@ -61,11 +64,14 @@ app.get("/listings/:id", async (req, res) => {
 });
 
 //CREATE ROUTE
-app.post("/listings", async (req, res) => {
- const newListing = new Listing(req.body);
+app.post("/listings",
+    wrapAsync(async (req, res, next) => {
+     const newListing = new Listing(req.body);
     await newListing.save();
     res.redirect("/listings");
-});
+
+})
+);
 
 //Edit ROute
 app.get("/listings/:id/edit", async(req, res) => {
@@ -90,31 +96,14 @@ app.delete("/listings/:id", async(req, res) => {
     res.redirect("/listings");
 });
 
-
-// test api
-// app.get("/testListing", async(req, res) => {
-//     let sampleListing = new Listing({
-//         title: "My new Villa",
-//         description: "By the Beach",
-//         price: 1200,
-//         location: "America",
-//         country: "USA"
-//     });
-
-//     await sampleListing.save();
-//     console.log("sample saved");
-//     res.send("Successfully saved");
+// app.all("*", (req, res, next) => {
+//     console.log("404 Triggered at:", req.originalUrl);  // 
+//     next(new ExpressError(404, "Page Not Found!"));
 // });
-// app.get("/testListing", async(req, res) => {
-//     let sampleListing = new Listing({
-//         title: "My new Villa",
-//         description: "By the Beach",
-//         price: 1200,
-//         location: "America",
-//         country: "USA"
-//     });
 
-//     await sampleListing.save();
-//     console.log("sample saved");
-//     res.send("Successfully saved");
-// });
+app.use((err,req,res,next) => {
+    console.log("error:", err);
+    
+    res.status(err.statusCode || 500).send(err.message);
+});
+

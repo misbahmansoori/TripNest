@@ -1,10 +1,10 @@
-<% layout("/layouts/boilerplate") %> 
+<% layout("layouts/boilerplate") %> 
 
 <div class="row">
   <div class="col-8 offset-2">
     <br><br>
     <h2>Edit a Listing</h2>
-    <form method="POST" action="/listings/<%= listing._id %>?_method=PUT">
+    <form method="POST" action="/listings/<%= listing._id %>?_method=PUT" novalidate class="needs-validation">
       
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
@@ -13,7 +13,10 @@
           value="<%= listing.title %>"
           type="text"
           class="form-control"
+          required
         />
+        <div class="valid-feedback">Title looks good</div>
+        <div class="invalid-feedback">Title required</div>
       </div>
 
       <div class="mb-3">
@@ -21,12 +24,14 @@
         <textarea
           name="listing[description]"
           class="form-control"
+          required
         ><%= listing.description %></textarea>
+        <div class="invalid-feedback">Enter a short description</div>
       </div>
 
       <div class="mb-3">
         <label for="image" class="form-label">Image Link</label>
-        <input name="listing[image]" value="<%= listing.image %>" type="text" class="form-control" />
+        <input name="listing[image]" value="<%= listing.image %>" type="text" class="form-control" required />
       </div>
 
       <div class="row">
@@ -37,7 +42,9 @@
             class="form-control"
             type="number"
             value="<%= listing.price %>"
+            required
           />
+          <div class="invalid-feedback">Enter a valid price</div>
         </div>
 
         <div class="mb-3 col-md-8">
@@ -46,7 +53,9 @@
             name="listing[country]"
             class="form-control"
             value="<%= listing.country %>"
+            required
           />
+          <div class="invalid-feedback">Country required</div>
         </div>
       </div>
 
@@ -56,7 +65,9 @@
           name="listing[location]"
           class="form-control"
           value="<%= listing.location %>"
+          required
         />
+        <div class="invalid-feedback">Location required</div>
       </div>
 
       <br />
@@ -65,3 +76,4 @@
     </form>
   </div>
 </div>
+<!-- <script src="/js/script.js"></script> -->
