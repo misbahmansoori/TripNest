@@ -1,3 +1,6 @@
+// An array of sample listing objects to seed the database
+// Each listing contains details like title, description, image URL, price, location, and country
+
 const sampleListings = [
   {
     title: "Cozy Beachfront Cottage",
@@ -7,6 +10,7 @@ const sampleListings = [
     location: "Malibu",
     country: "United States"
   },
+    // ... more listings follow with similar structure
   {
     title: "Modern Loft in Downtown",
     description: "Stay in the heart of the city in this stylish loft apartment. Perfect for urban explorers!",
@@ -136,5 +140,8 @@ const sampleListings = [
     country: "Maldives"
   }
 ];
+
+// Export the sampleListings array wrapped in an object with key 'data'
+// So you can access it using: initData.data
 
 module.exports = { data: sampleListings };

@@ -1,52 +1,98 @@
-<% layout("layouts/boilerplate")%>
+<% layout("layouts/boilerplate") %>
+<!-- Using the main boilerplate layout for consistent design -->
+
 <div class="row">
   <div class="col-8 offset-2">
     <br><br>
     <h2>Create a new Listing</h2>
+
+    <!-- Form to create a new listing -->
+    <!-- Submits a POST request to /listings -->
+    <!-- Bootstrap validation classes are used -->
     <form method="POST" action="/listings" novalidate class="needs-validation">
-      
+
+      <!-- Title field -->
       <div class="mb-3">
         <label for="title" class="form-label">Title</label>
-        <input name="title" placeholder="Add a catchy title" class="form-control" required>
+        <input 
+          name="listing[title]" 
+          placeholder="Add a catchy title" 
+          class="form-control" 
+          required
+        >
         <div class="valid-feedback">Title looks good</div>
         <div class="invalid-feedback">Title is required</div>
       </div>
-      
 
+      <!-- Description field -->
       <div class="mb-3">
         <label for="description" class="form-label">Description</label>
-        <textarea name="description" class="form-control" placeholder="enter description" required></textarea>
+        <textarea 
+          name="listing[description]" 
+          class="form-control" 
+          placeholder="enter description" 
+          required
+        ></textarea>
         <div class="invalid-feedback">Short description required</div>
       </div>
 
+      <!-- Image URL field -->
       <div class="mb-3">
         <label for="image" class="form-label">Image Link</label>
-        <input name="image" placeholder="enter image URL/Link" type="text" class="form-control">
+        <input 
+          name="listing[image]" 
+          placeholder="enter image URL/Link" 
+          type="text" 
+          class="form-control"
+        >
       </div>
 
+      <!-- Price and Country fields in a row -->
       <div class="row">
+
+        <!-- Price input -->
         <div class="mb-3 col-md-4">
           <label for="price" class="form-label">Price</label>
-          <input name="price"  placeholder="1200" class="form-control" required>
-        <div class="invalid-feedback">Enter valid price</div>
+          <input 
+            name="listing[price]"  
+            placeholder="1200" 
+            class="form-control" 
+            required
+          >
+          <div class="invalid-feedback">Enter valid price</div>
         </div>
 
+        <!-- Country input -->
         <div class="mb-3 col-md-8">
           <label for="country" class="form-label">Country</label>
-          <input name="country" placeholder="India" class="form-control" required>
+          <input 
+            name="listing[country]" 
+            placeholder="India" 
+            class="form-control" 
+            required
+          >
           <div class="invalid-feedback">Enter valid Country</div>
         </div>
       </div>
 
+      <!-- Location field -->
       <div class="mb-3">
         <label for="location" class="form-label">Location</label>
-        <input name="location" placeholder="Goa" type="text" class="form-control" required>
+        <input 
+          name="listing[location]" 
+          placeholder="Goa" 
+          type="text" 
+          class="form-control" 
+          required
+        >
         <div class="invalid-feedback">Enter a proper location</div>
       </div>
 
       <br><br>
+      <!-- Submit button -->
       <button class="btn btn-dark add-btn">ADD</button>
       <br><br>
+
     </form>
   </div>
 </div>
