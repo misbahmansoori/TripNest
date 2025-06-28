@@ -2,11 +2,15 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Listing = require("./models/listing.js"); // Mongoose model for listings
-const wrapAsync = require("./utils/wrapAsync.js"); // Utility to handle async errors
+const session = require("express-session");
+const flash = require("connect-flash");
+
+
 const ExpressError = require("./utils/ExpressError.js"); // Custom error handler
-const { listingSchema, reviewSchema } = require("./schema.js"); // JOI validation schema
-const Review = require("./models/review.js");
+
+
+const listings = require("./routes/listing.js");
+const reviews = require("./routes/review.js");
 
 const methodOverride = require("method-override"); // To support PUT & DELETE methods via forms
 const ejsMate = require("ejs-mate"); // Layout engine for EJS
@@ -51,6 +55,17 @@ app.listen(8080, () => {
     console.log("Server is listening to port 8080");
 });
 
+const sessionOptions = {
+    secret: "mysupersecretcode",
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+    },
+};
+
 
 // Basic API set up
 app.get("/", (req, res) => {
@@ -58,112 +73,25 @@ app.get("/", (req, res) => {
 });
 
 
-// Middleware to validate listings before creating/updating
-const validateListing = (req, res, next) => {
-    let { error } = listingSchema.validate(req.body); // Validate form data
-    if (error) {
-        // Join all error messages into a single string
-        let errMsg = error.details.map((el) => el.message).join(",");
-        // Throw custom error
-        throw new ExpressError(400, errMsg);
-    } else {
-        next(); // Move to the next middleware/route
-    }
-};
-
-const validateReview = (req, res, next) => {
-    let { error } = reviewSchema.validate(req.body); // Validate form data
-    if (error) {
-        // Join all error messages into a single string
-        let errMsg = error.details.map((el) => el.message).join(",");
-        // Throw custom error
-        throw new ExpressError(400, errMsg);
-    } else {
-        next(); // Move to the next middleware/route
-    }
-};
+app.use(session(sessionOptions));
+app.use(flash());
 
 
-// Listing route - Index page to show all listings
-app.get("/listings", wrapAsync(async (req, res) => {
-    const allListings = await Listing.find({});
-    res.render("listings/index.ejs", { allListings });
-}));
 
-
-// NEW route - Form to create a new listing
-app.get("/listings/new", (req, res) => {
-    res.render("listings/new.ejs");
+app.use((req, res, next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
 });
 
 
-// Show route - View a single listing
-app.get("/listings/:id", wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    const listing = await Listing.findById(id).populate("reviews");
-    res.render("listings/show.ejs", { listing });
-}));
+app.use("/listings", listings);
+app.use("/listings/:id/reviews", reviews);
 
 
-// CREATE route - Adds new listing to database
-app.post("/listings", validateListing,
-    wrapAsync(async (req, res, next) => {
-        const newListing = new Listing(req.body.listing); // Form data structure: { listing: { ... } }
-        await newListing.save();
-        res.redirect("/listings");
-    })
-);
 
 
-// Edit route - Form to edit an existing listing
-app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    const listing = await Listing.findById(id);
-    res.render("listings/edit.ejs", { listing });
-}));
 
-
-// Update route - Save changes to an existing listing
-app.put("/listings/:id", validateListing, wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    const listingData = req.body.listing; // Destructure edited listing from form
-    await Listing.findByIdAndUpdate(id, listingData);
-    res.redirect(`/listings/${id}`);
-}));
-
-
-// Delete route - Remove a listing from the database
-app.delete("/listings/:id", wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let deletedListing = await Listing.findByIdAndDelete(id);
-    console.log(deletedListing);
-    res.redirect("/listings");
-}));
-
-
-// REVIEWS Storing Reviews for particular listings
-//POST ROUTE
-app.post("/listings/:id/reviews", validateReview, wrapAsync(async(req, res) => {
-    let listing = await Listing.findById(req.params.id);
-    let newReview = new Review(req.body.review);
-
-    listing.reviews.push(newReview);
-
-    await newReview.save();
-    await listing.save();
-
-    res.redirect(`/listings/${listing._id}`);
-}));
-
-//Delete Review Route
-app.delete("/listings/:id/reviews/:reviewId", wrapAsync(async(req, res)=>{
-    let {id , reviewId} = req.params;
-    await Listing.findByIdAndUpdate(id, {$pull: {reviews: new mongoose.Types.ObjectId(reviewId)}});
-    await Review.findByIdAndDelete(reviewId);
-
-    res.redirect(`/listings/${id}`);
-})
-);
 
 
 

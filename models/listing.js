@@ -1,6 +1,7 @@
 // Importing Mongoose to define a schema and model
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema; // Shortcut to access Mongoose's Schema class
+const Review = require("./review.js")
 
 // Defining the structure of a "Listing" document using Mongoose schema
 const listingSchema = new Schema({
@@ -32,6 +33,13 @@ const listingSchema = new Schema({
       ref: "Review",
     },
   ],
+});
+
+listingSchema.post("findOneAndDelete", async(listing) => {
+  if(listing) {
+     await Review.deleteMany({_id: {$in: listing.reviews}});
+  }
+ 
 });
 
 // Creating the Mongoose model named "Listing" using the schema
