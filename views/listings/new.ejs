@@ -1,98 +1,81 @@
 <% layout("layouts/boilerplate") %>
-<!-- Using the main boilerplate layout for consistent design -->
 
-<div class="row">
-  <div class="col-8 offset-2">
-    <br><br>
-    <h2>Create a new Listing</h2>
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
 
-    <!-- Form to create a new listing -->
-    <!-- Submits a POST request to /listings -->
-    <!-- Bootstrap validation classes are used -->
-    <form method="POST" action="/listings" novalidate class="needs-validation">
+      <h2 class="mb-4 text-center fw-bold">Create a New Listing</h2>
 
-      <!-- Title field -->
-      <div class="mb-3">
-        <label for="title" class="form-label">Title</label>
-        <input 
-          name="listing[title]" 
-          placeholder="Add a catchy title" 
-          class="form-control" 
-          required
-        >
-        <div class="valid-feedback">Title looks good</div>
-        <div class="invalid-feedback">Title is required</div>
-      </div>
+      <form method="POST" action="/listings" novalidate class="needs-validation" enctype="multipart/form-data">
 
-      <!-- Description field -->
-      <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
-        <textarea 
-          name="listing[description]" 
-          class="form-control" 
-          placeholder="enter description" 
-          required
-        ></textarea>
-        <div class="invalid-feedback">Short description required</div>
-      </div>
-
-      <!-- Image URL field -->
-      <div class="mb-3">
-        <label for="image" class="form-label">Image Link</label>
-        <input 
-          name="listing[image]" 
-          placeholder="enter image URL/Link" 
-          type="text" 
-          class="form-control"
-        >
-      </div>
-
-      <!-- Price and Country fields in a row -->
-      <div class="row">
-
-        <!-- Price input -->
-        <div class="mb-3 col-md-4">
-          <label for="price" class="form-label">Price</label>
-          <input 
-            name="listing[price]"  
-            placeholder="1200" 
-            class="form-control" 
-            required
-          >
-          <div class="invalid-feedback">Enter valid price</div>
+        <!-- Title -->
+        <div class="mb-3">
+          <label for="title" class="form-label">Title</label>
+          <input name="listing[title]" class="form-control" placeholder="Add a catchy title" required />
+          <div class="invalid-feedback">Title is required.</div>
         </div>
 
-        <!-- Country input -->
-        <div class="mb-3 col-md-8">
-          <label for="country" class="form-label">Country</label>
-          <input 
-            name="listing[country]" 
-            placeholder="India" 
-            class="form-control" 
-            required
-          >
-          <div class="invalid-feedback">Enter valid Country</div>
+        <!-- Description -->
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <textarea name="listing[description]" class="form-control" rows="3" placeholder="Enter description" required></textarea>
+          <div class="invalid-feedback">Short description required.</div>
         </div>
-      </div>
 
-      <!-- Location field -->
-      <div class="mb-3">
-        <label for="location" class="form-label">Location</label>
-        <input 
-          name="listing[location]" 
-          placeholder="Goa" 
-          type="text" 
-          class="form-control" 
-          required
-        >
-        <div class="invalid-feedback">Enter a proper location</div>
-      </div>
+        <!-- Image -->
+        <div class="mb-3">
+          <label for="image" class="form-label">Upload Image</label>
+          <input name="listing[image]" type="file" class="form-control" required />
+          <div class="invalid-feedback">Please upload an image.</div>
+        </div>
 
-      <br><br>
-      <!-- Submit button -->
-      <button class="btn btn-dark add-btn">ADD</button>
-      <br><br>
+        <!-- Price and Country -->
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input name="listing[price]" class="form-control" placeholder="1200" required />
+            <div class="invalid-feedback">Enter a valid price.</div>
+          </div>
 
-    </form>
+          <div class="col-md-8 mb-3">
+            <label for="country" class="form-label">Country</label>
+            <input name="listing[country]" class="form-control" placeholder="India" required />
+            <div class="invalid-feedback">Country is required.</div>
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="mb-4">
+          <label for="location" class="form-label">Location</label>
+          <input name="listing[location]" class="form-control" placeholder="Goa" required />
+          <div class="invalid-feedback">Location is required.</div>
+        </div>
+
+        <!-- Category -->
+        <div class="mb-4">
+          <label for="category" class="form-label">Category</label>
+          <select name="listing[category]" class="form-select" required>
+            <option value="">Select a category</option>
+            <option value="beach">Beach</option>
+            <option value="mountains">Mountains</option>
+            <option value="trending">Trending</option>
+            <option value="rooms">Rooms</option>
+            <option value="iconic">Iconic Cities</option>
+            <option value="camping">Camping</option>
+            <option value="farms">Farms</option>
+            <option value="arctic">Arctic</option>
+            <option value="pools">Amazing Pools</option>
+            <option value="castles">Castles</option>
+          </select>
+          <div class="invalid-feedback">Please select a category.</div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button class="btn add-btn px-4 py-2">Add Listing</button>
+        </div>
+
+      </form>
+    </div>
   </div>
 </div>

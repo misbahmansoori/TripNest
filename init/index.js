@@ -33,6 +33,10 @@ const initDB = async () => {
 
   // If no listings are found, insert the sample data
   if (count === 0) {
+     initData.data = initData.data.map((obj) => ({
+      ...obj,
+      owner: "6860e6ced67ff12a940c4cc3", // Replace with a real user ID from your DB
+    }));
     await Listing.insertMany(initData.data);
     console.log("Inserted sample listings.");
   } else {

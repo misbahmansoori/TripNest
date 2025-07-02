@@ -1,8 +1,14 @@
+if(process.env.NODE_ENV != "production"){
+    require('dotenv').config();
+}
+
+console.log(process.env.SECRET);
 // Requiring Everything Here
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 
 
@@ -39,7 +45,8 @@ app.engine('ejs', ejsMate);
 
 
 // Connecting Database
-const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+// const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
+const dbUrl = process.env.ATLAS_DB_URL;
 
 main().then(() => {
     console.log("connected to database ");
@@ -50,7 +57,7 @@ main().then(() => {
 
 // Async function to connect to MongoDB
 async function main() {
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(dbUrl);
 }
 
 
@@ -59,8 +66,21 @@ app.listen(8080, () => {
     console.log("Server is listening to port 8080");
 });
 
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    crypto: {
+        secret: process.enV.SECRET,
+    }, 
+    touchAfter: 24 * 3600,
+})
+
+store.on("error", ()=> {
+    console.log("ERROR in MONGO SESSION STORE", err);
+} )
+
 const sessionOptions = {
-    secret: "mysupersecretcode",
+    store,
+    secret: process.enc.SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: {
@@ -71,10 +91,7 @@ const sessionOptions = {
 };
 
 
-// Basic API set up
-app.get("/", (req, res) => {
-    res.send("working don't worry"); // Root route test
-});
+
 
 
 app.use(session(sessionOptions));
@@ -91,6 +108,7 @@ passport.deserializeUser(User.deserializeUser());
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
+    res.locals.currUser = req.user;
     next();
 });
 
@@ -104,7 +122,6 @@ app.use((req, res, next) => {
 //     let registerUser = await User.register(fakeUser, "helloworld");
 //     res.send(registerUser);
 // });
-
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
